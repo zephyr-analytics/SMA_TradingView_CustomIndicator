@@ -1,0 +1,22 @@
+//@version=5
+indicator('168 SMA', overlay=true)
+
+// Create SMA
+SMA = ta.sma(close, 168)
+
+// Make a persistent label variable
+var label crossLabel = na
+
+// When SMA cross happens, make a new label
+if ta.cross(close, SMA)
+    labelColour = close < SMA ? color.red : color.green
+    labelY = close < SMA ? yloc.abovebar : yloc.belowbar
+    labelorient = close < SMA ? label.style_label_down : label.style_label_up
+
+    crossLabel := label.new(bar_index, high, text="SMA Cross", color=labelColour, textcolor=color.white)
+    label.set_yloc(crossLabel[1], yloc=labelY)
+    label.set_style(crossLabel[1], labelorient)
+    label.set_text(crossLabel[1], "")
+
+// Plot SMA
+plot(SMA)
