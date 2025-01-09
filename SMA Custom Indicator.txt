@@ -1,22 +1,22 @@
-//@version=5
-indicator('168 SMA', overlay=true)
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © Zephyr Analytics
 
-// Create SMA
-SMA = ta.sma(close, 168)
+//@version=6
+indicator("168 SMA Indicator", overlay=true)
 
-// Make a persistent label variable
-var label crossLabel = na
+// Input for SMA Length
+smaLength = input.int(168, title="SMA Length", minval=1, tooltip="Simple Moving Average period")
 
-// When SMA cross happens, make a new label
-if ta.cross(close, SMA)
-    labelColour = close < SMA ? color.red : color.green
-    labelY = close < SMA ? yloc.abovebar : yloc.belowbar
-    labelorient = close < SMA ? label.style_label_down : label.style_label_up
+// Calculate the 168 SMA
+smaValue = ta.sma(close, smaLength)
 
-    crossLabel := label.new(bar_index, high, text="SMA Cross", color=labelColour, textcolor=color.white)
-    label.set_yloc(crossLabel[1], yloc=labelY)
-    label.set_style(crossLabel[1], labelorient)
-    label.set_text(crossLabel[1], "")
+// Plot the SMA
+plot(smaValue, color=color.black, linewidth=1, title="168 SMA")
 
-// Plot SMA
-plot(SMA)
+// Add crossover and crossunder signals
+longSignal = ta.crossover(close, smaValue)
+shortSignal = ta.crossunder(close, smaValue)
+
+// Plot crossover signals
+plotshape(longSignal, style=shape.labelup, location=location.belowbar, color=color.green, size=size.small, text="BUY", textcolor=color.white)
+plotshape(shortSignal, style=shape.labeldown, location=location.abovebar, color=color.red, size=size.small, text="SELL", textcolor=color.white)
